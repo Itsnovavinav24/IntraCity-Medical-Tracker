@@ -1,0 +1,47 @@
+[
+  {
+    "id": "log-1790937933735",
+    "hospitalId": "H001",
+    "hospitalName": "Patna Apex Super Speciality Hospital",
+    "timestamp": "2026-10-02T10:45:33.735Z",
+    "updatedBy": "Automated Test Officer",
+    "changes": {
+      "icuBeds": {
+        "total": 20,
+        "available": 6
+      },
+      "ventilators": {
+        "total": 12,
+        "available": 4
+      },
+      "emergencyReady": true
+    },
+    "note": "Shift handoff check"
+  },
+  {
+    "id": "log-001",
+    "hospitalId": "H001",
+    "hospitalName": "Patna Apex Super Speciality Hospital",
+    "timestamp": "2026-10-02T10:15:00.000Z",
+    "updatedBy": "Staff Nurse / Triage Desk",
+    "changes": {
+      "icuBeds": {
+        "available": 5
+      },
+      "ventilators": {
+        "available": 3
+      },
+      "oxygenCylinders": 28
+    },
+    "note": "Shift handoff verified bed counts and oxygen backup."
+  },
+  {
+    "id": "log-002",
+    "hospitalId": "H002",
+    "hospitalName": "CityCare Emergency & Trauma Centre",
+    "timestamp": "2026-10-02T10:28:00.000Z",
+    "updatedBy": "Duty Medical Officer",
+    "changes": {
+      "emergencyBeds": {
+        "available": 4
+      },
