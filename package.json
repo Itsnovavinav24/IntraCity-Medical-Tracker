@@ -1,0 +1,14 @@
+{
+  "name": "intracity-medical-resource-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "City-level live medical resource discovery and matching platform",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
