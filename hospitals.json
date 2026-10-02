@@ -1,0 +1,523 @@
+[
+  {
+    "id": "H001",
+    "name": "Patna Apex Super Speciality Hospital",
+    "type": "Government Multi-Speciality",
+    "city": "Patna",
+    "area": "Bailey Road",
+    "address": "Plot 14, Bailey Road, Near High Court, Patna, Bihar 800001",
+    "lat": 25.6093,
+    "lng": 85.1235,
+    "contacts": {
+      "emergency": "+91-612-2500101",
+      "ambulance": "+91-9800000101",
+      "bloodBank": "+91-612-2500105",
+      "reception": "+91-612-2500100"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 1 Trauma Center",
+    "specialties": [
+      "Emergency & Trauma",
+      "Cardiology",
+      "Neurology",
+      "Critical Care",
+      "Pulmonology"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 120,
+        "available": 34
+      },
+      "emergencyBeds": {
+        "total": 24,
+        "available": 7
+      },
+      "icuBeds": {
+        "total": 20,
+        "available": 6
+      },
+      "ventilators": {
+        "total": 12,
+        "available": 4
+      },
+      "oxygen": {
+        "supportedBeds": 45,
+        "cylindersAvailable": 28,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 14,
+        "A-": 4,
+        "B+": 18,
+        "B-": 3,
+        "AB+": 6,
+        "AB-": 2,
+        "O+": 22,
+        "O-": 5
+      },
+      "ambulances": {
+        "bls": 4,
+        "als": 2,
+        "onDuty": 5,
+        "dispatchContact": "+91-9800000101"
+      }
+    },
+    "lastVerified": "2026-10-02T10:45:33.735Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H002",
+    "name": "CityCare Emergency & Trauma Centre",
+    "type": "Private Super Speciality",
+    "city": "Patna",
+    "area": "Kankarbagh",
+    "address": "Road No. 4, Doctors Colony, Kankarbagh, Patna, Bihar 800020",
+    "lat": 25.5941,
+    "lng": 85.1376,
+    "contacts": {
+      "emergency": "+91-612-2351212",
+      "ambulance": "+91-9800000202",
+      "bloodBank": "+91-612-2351215",
+      "reception": "+91-612-2351200"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 2 Trauma Center",
+    "specialties": [
+      "Trauma Surgery",
+      "Orthopaedics",
+      "General Surgery",
+      "Intensive Care"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 80,
+        "available": 18
+      },
+      "emergencyBeds": {
+        "total": 16,
+        "available": 4
+      },
+      "icuBeds": {
+        "total": 14,
+        "available": 2
+      },
+      "ventilators": {
+        "total": 8,
+        "available": 1
+      },
+      "oxygen": {
+        "supportedBeds": 30,
+        "cylindersAvailable": 15,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 8,
+        "A-": 1,
+        "B+": 11,
+        "B-": 2,
+        "AB+": 3,
+        "AB-": 0,
+        "O+": 9,
+        "O-": 1
+      },
+      "ambulances": {
+        "bls": 2,
+        "als": 1,
+        "onDuty": 3,
+        "dispatchContact": "+91-9800000202"
+      }
+    },
+    "lastVerified": "2026-10-02T10:28:00.000Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H003",
+    "name": "Magadh Heart & Critical Institute",
+    "type": "Speciality Institute",
+    "city": "Patna",
+    "area": "Raja Bazar",
+    "address": "Opposite Pillar 68, Raja Bazar, Patna, Bihar 800014",
+    "lat": 25.612,
+    "lng": 85.092,
+    "contacts": {
+      "emergency": "+91-612-2287700",
+      "ambulance": "+91-9800000303",
+      "bloodBank": "+91-612-2287705",
+      "reception": "+91-612-2287711"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 2 Cardiac Care",
+    "specialties": [
+      "Cardiology",
+      "Cardiothoracic Surgery",
+      "Cardiac ICU",
+      "Vascular Surgery"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 60,
+        "available": 12
+      },
+      "emergencyBeds": {
+        "total": 12,
+        "available": 3
+      },
+      "icuBeds": {
+        "total": 18,
+        "available": 4
+      },
+      "ventilators": {
+        "total": 10,
+        "available": 2
+      },
+      "oxygen": {
+        "supportedBeds": 35,
+        "cylindersAvailable": 22,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 12,
+        "A-": 3,
+        "B+": 14,
+        "B-": 4,
+        "AB+": 5,
+        "AB-": 2,
+        "O+": 16,
+        "O-": 4
+      },
+      "ambulances": {
+        "bls": 1,
+        "als": 2,
+        "onDuty": 3,
+        "dispatchContact": "+91-9800000303"
+      }
+    },
+    "lastVerified": "2026-10-02T10:05:00.000Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H004",
+    "name": "GreenLife Children & General Hospital",
+    "type": "Charitable Trust Hospital",
+    "city": "Patna",
+    "area": "Patliputra",
+    "address": "Industrial Area Road, Patliputra Colony, Patna, Bihar 800013",
+    "lat": 25.628,
+    "lng": 85.115,
+    "contacts": {
+      "emergency": "+91-612-2260400",
+      "ambulance": "+91-9800000404",
+      "bloodBank": "+91-612-2260410",
+      "reception": "+91-612-2260401"
+    },
+    "emergencyReady": false,
+    "traumaLevel": "Primary Care / Non-Trauma",
+    "specialties": [
+      "Paediatrics",
+      "General Medicine",
+      "Neonatology",
+      "Obstetrics"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 95,
+        "available": 41
+      },
+      "emergencyBeds": {
+        "total": 8,
+        "available": 1
+      },
+      "icuBeds": {
+        "total": 6,
+        "available": 0
+      },
+      "ventilators": {
+        "total": 4,
+        "available": 0
+      },
+      "oxygen": {
+        "supportedBeds": 18,
+        "cylindersAvailable": 8,
+        "pipelineStatus": "Limited"
+      },
+      "blood": {
+        "A+": 4,
+        "A-": 0,
+        "B+": 5,
+        "B-": 1,
+        "AB+": 1,
+        "AB-": 0,
+        "O+": 6,
+        "O-": 1
+      },
+      "ambulances": {
+        "bls": 1,
+        "als": 0,
+        "onDuty": 1,
+        "dispatchContact": "+91-9800000404"
+      }
+    },
+    "lastVerified": "2026-10-02T08:15:00.000Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H005",
+    "name": "Danapur Cantonment Multi-Care Hospital",
+    "type": "Semi-Government",
+    "city": "Patna",
+    "area": "Danapur",
+    "address": "Station Road, Danapur Cantt, Patna, Bihar 801503",
+    "lat": 25.6335,
+    "lng": 85.045,
+    "contacts": {
+      "emergency": "+91-612-2415100",
+      "ambulance": "+91-9800000505",
+      "bloodBank": "+91-612-2415108",
+      "reception": "+91-612-2415101"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 2 Trauma Center",
+    "specialties": [
+      "Emergency Medicine",
+      "General Surgery",
+      "Orthopaedics",
+      "ENT"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 110,
+        "available": 52
+      },
+      "emergencyBeds": {
+        "total": 18,
+        "available": 6
+      },
+      "icuBeds": {
+        "total": 12,
+        "available": 3
+      },
+      "ventilators": {
+        "total": 6,
+        "available": 2
+      },
+      "oxygen": {
+        "supportedBeds": 32,
+        "cylindersAvailable": 19,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 9,
+        "A-": 2,
+        "B+": 12,
+        "B-": 3,
+        "AB+": 4,
+        "AB-": 1,
+        "O+": 14,
+        "O-": 2
+      },
+      "ambulances": {
+        "bls": 3,
+        "als": 1,
+        "onDuty": 3,
+        "dispatchContact": "+91-9800000505"
+      }
+    },
+    "lastVerified": "2026-10-02T10:20:00.000Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H006",
+    "name": "Barh Sub-Divisional Civil Hospital",
+    "type": "Government District Hospital",
+    "city": "Barh",
+    "area": "Main Road",
+    "address": "Sub-Division Campus, Hospital Road, Barh, Bihar 803213",
+    "lat": 25.483,
+    "lng": 85.71,
+    "contacts": {
+      "emergency": "+91-6132-242100",
+      "ambulance": "+91-9800000606",
+      "bloodBank": "+91-6132-242104",
+      "reception": "+91-6132-242101"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 3 Community Hospital",
+    "specialties": [
+      "Emergency Triage",
+      "Maternity",
+      "General Medicine"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 70,
+        "available": 28
+      },
+      "emergencyBeds": {
+        "total": 10,
+        "available": 3
+      },
+      "icuBeds": {
+        "total": 6,
+        "available": 1
+      },
+      "ventilators": {
+        "total": 2,
+        "available": 0
+      },
+      "oxygen": {
+        "supportedBeds": 15,
+        "cylindersAvailable": 12,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 5,
+        "A-": 1,
+        "B+": 7,
+        "B-": 1,
+        "AB+": 2,
+        "AB-": 0,
+        "O+": 8,
+        "O-": 1
+      },
+      "ambulances": {
+        "bls": 2,
+        "als": 0,
+        "onDuty": 2,
+        "dispatchContact": "+91-9800000606"
+      }
+    },
+    "lastVerified": "2026-10-02T09:50:00.000Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H007",
+    "name": "Gaya Central Medical College & Hospital",
+    "type": "Government Teaching Hospital",
+    "city": "Gaya",
+    "area": "Medical College Road",
+    "address": "Sherghati Road, Gaya, Bihar 823001",
+    "lat": 24.7955,
+    "lng": 85.0002,
+    "contacts": {
+      "emergency": "+91-631-2220100",
+      "ambulance": "+91-9800000707",
+      "bloodBank": "+91-631-2220105",
+      "reception": "+91-631-2220101"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 1 Regional Trauma Center",
+    "specialties": [
+      "Emergency & Trauma",
+      "Neurosurgery",
+      "Cardiology",
+      "Burns Unit",
+      "General Surgery"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 150,
+        "available": 62
+      },
+      "emergencyBeds": {
+        "total": 28,
+        "available": 9
+      },
+      "icuBeds": {
+        "total": 24,
+        "available": 6
+      },
+      "ventilators": {
+        "total": 14,
+        "available": 4
+      },
+      "oxygen": {
+        "supportedBeds": 50,
+        "cylindersAvailable": 35,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 16,
+        "A-": 4,
+        "B+": 20,
+        "B-": 5,
+        "AB+": 8,
+        "AB-": 3,
+        "O+": 25,
+        "O-": 6
+      },
+      "ambulances": {
+        "bls": 4,
+        "als": 2,
+        "onDuty": 6,
+        "dispatchContact": "+91-9800000707"
+      }
+    },
+    "lastVerified": "2026-10-02T10:18:00.000Z",
+    "pin": "1234"
+  },
+  {
+    "id": "H008",
+    "name": "Muzaffarpur District Lifeline Hospital",
+    "type": "Private Multi-Speciality",
+    "city": "Muzaffarpur",
+    "area": "Juran Chapra",
+    "address": "Main Road, Juran Chapra, Muzaffarpur, Bihar 842001",
+    "lat": 26.1209,
+    "lng": 85.3647,
+    "contacts": {
+      "emergency": "+91-621-2244100",
+      "ambulance": "+91-9800000808",
+      "bloodBank": "+91-621-2244106",
+      "reception": "+91-621-2244101"
+    },
+    "emergencyReady": true,
+    "traumaLevel": "Level 2 Trauma Center",
+    "specialties": [
+      "Critical Care",
+      "Pediatrics",
+      "Trauma",
+      "Nephrology & Dialysis"
+    ],
+    "resources": {
+      "generalBeds": {
+        "total": 85,
+        "available": 24
+      },
+      "emergencyBeds": {
+        "total": 14,
+        "available": 5
+      },
+      "icuBeds": {
+        "total": 10,
+        "available": 3
+      },
+      "ventilators": {
+        "total": 6,
+        "available": 1
+      },
+      "oxygen": {
+        "supportedBeds": 28,
+        "cylindersAvailable": 16,
+        "pipelineStatus": "Operational"
+      },
+      "blood": {
+        "A+": 10,
+        "A-": 2,
+        "B+": 12,
+        "B-": 2,
+        "AB+": 4,
+        "AB-": 1,
+        "O+": 15,
+        "O-": 3
+      },
+      "ambulances": {
+        "bls": 2,
+        "als": 1,
+        "onDuty": 3,
+        "dispatchContact": "+91-9800000808"
+      }
+    },
+    "lastVerified": "2026-10-02T09:42:00.000Z",
+    "pin": "1234"
+  }
+]
