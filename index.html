@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>IntraCity | Live Emergency Medical Resource Tracker</title>
+  <meta name="description" content="City-wide live medical resource tracker. Locate verified ICU beds, oxygen, ventilators, blood bank inventory, and ambulances near you in real-time.">
+  
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Top Emergency Alert Bar / Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M12 7v6m-3-3h6" stroke-width="2.4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-meta">
+            <span class="live-pill"><span class="pulse-dot"></span> LIVE NETWORK</span>
+            <span class="city-badge" id="currentCityLabel">Patna Metro & Bihar</span>
+          </div>
+          <h1 class="brand-title">IntraCity <span>Medical Tracker</span></h1>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="header-nav" aria-label="Main Navigation">
+        <button class="nav-tab active" data-tab="directory">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Directory & Map
+        </button>
+        <button class="nav-tab" data-tab="quickmatch">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          Emergency Match
+        </button>
+        <button class="nav-tab" data-tab="bloodbank">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          Blood Bank Stock
+        </button>
+        <button class="nav-tab" data-tab="alerts">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Live Alerts <span class="badge-count" id="headerAlertCount">0</span>
+        </button>
+        <button class="nav-tab admin-tab-btn" data-tab="admin">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Hospital Portal
+        </button>
+      </nav>
+
+      <!-- Quick Action Buttons -->
+      <div class="header-actions">
+        <button id="headerLocateBtn" class="btn btn-outline" title="Use current GPS location">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3m-10-10h3m14 0h3"/></svg>
+          <span id="locateBtnText">My Location</span>
+        </button>
+        <a href="tel:108" class="btn btn-emergency" title="National Emergency Ambulance Service">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Dial 108
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- City-wide Summary Metrics Strip -->
+  <section class="stats-strip" aria-label="City Summary Metrics">
+    <div class="stats-container" id="statsBar">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">🏥</div>
+        <div class="stat-info">
+          <span class="stat-label">Verified Facilities</span>
+          <b class="stat-val" id="statHospitals">-</b>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-red">🛏️</div>
+        <div class="stat-info">
+          <span class="stat-label">ICU Beds Available</span>
+          <b class="stat-val" id="statIcu">-</b>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-amber">💨</div>
+        <div class="stat-info">
+          <span class="stat-label">Ventilators Free</span>
+          <b class="stat-val" id="statVentilators">-</b>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-cyan">🫁</div>
+        <div class="stat-info">
+          <span class="stat-label">Oxygen Cylinders</span>
+          <b class="stat-val" id="statOxygenCylinders">-</b>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-emerald">🚑</div>
+        <div class="stat-info">
+          <span class="stat-label">Ambulances Ready</span>
+          <b class="stat-val" id="statAmbulances">-</b>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-rose">🩸</div>
+        <div class="stat-info">
+          <span class="stat-label">Blood Units Stocked</span>
+          <b class="stat-val" id="statBlood">-</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN APP VIEWS -->
+  <main class="app-main">
+
+    <!-- VIEW 1: DIRECTORY & INTERACTIVE MAP -->
+    <section id="view-directory" class="tab-view active">
+      <!-- Search & Filter Control Deck -->
+      <div class="filter-deck">
+        <div class="search-primary">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Search hospital name, specialty, or area (e.g. Apex, Bailey Road, Cardiology)..." autocomplete="off">
+            <button id="clearSearchBtn" class="clear-btn hidden" title="Clear search">✕</button>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-control">
+            <label for="citySelect">City</label>
+            <select id="citySelect">
+              <option value="">All Cities</option>
+            </select>
+          </div>
+
+          <div class="filter-control">
+            <label for="areaSelect">Area / Zone</label>
+            <select id="areaSelect">
+              <option value="">All Areas</option>
+            </select>
+          </div>
+
+          <div class="filter-control">
+            <label for="resourceSelect">Resource Type</label>
+            <select id="resourceSelect">
+              <option value="">Any Resource</option>
+              <option value="icu">ICU Bed Available</option>
+              <option value="ventilator">Mechanical Ventilator</option>
+              <option value="oxygen">Oxygen Bed / Cylinders</option>
+              <option value="emergency">Emergency Bed Available</option>
+              <option value="general">General Bed Available</option>
+              <option value="blood">Blood Bank Stock</option>
+              <option value="ambulance">Active Ambulance</option>
+            </select>
+          </div>
+
+          <div class="filter-control" id="bloodFilterWrapper" style="display: none;">
+            <label for="bloodGroupSelect">Blood Group</label>
+            <select id="bloodGroupSelect">
+              <option value="">Any Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+
+          <div class="filter-control">
+            <label for="sortSelect">Sort By</label>
+            <select id="sortSelect">
+              <option value="name">Hospital Name (A-Z)</option>
+              <option value="distance">Proximity (Nearest First)</option>
+              <option value="icu">Most ICU Beds Free</option>
+              <option value="generalBeds">Most General Beds</option>
+              <option value="freshness">Most Recently Verified</option>
+            </select>
+          </div>
+
+          <div class="filter-checkbox-wrap">
+            <label class="checkbox-label" for="emergencyOnlyCheckbox">
+              <input type="checkbox" id="emergencyOnlyCheckbox">
+              <span>Emergency Ready Only</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Legend / Quick Tags -->
+        <div class="quick-tags-row">
+          <div class="resource-chips" id="quickResourceChips">
+            <button class="chip-btn active" data-res="">All</button>
+            <button class="chip-btn" data-res="icu">🫀 ICU Beds</button>
+            <button class="chip-btn" data-res="ventilator">💨 Ventilators</button>
+            <button class="chip-btn" data-res="oxygen">🫁 Oxygen Support</button>
+            <button class="chip-btn" data-res="blood">🩸 Blood Bank</button>
+            <button class="chip-btn" data-res="ambulance">🚑 Ambulances</button>
+          </div>
+          <div class="freshness-legend">
+            <span class="legend-item"><span class="dot dot-green"></span> Live (&lt;10m)</span>
+            <span class="legend-item"><span class="dot dot-yellow"></span> Verified (&lt;45m)</span>
+            <span class="legend-item"><span class="dot dot-red"></span> Stale (&gt;1h)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Directory Layout: Split Cards & Map -->
+      <div class="directory-layout">
+        <!-- Hospital Cards Column -->
+        <div class="directory-cards-col">
+          <div class="results-header">
+            <h2 class="section-title">Verified Medical Facilities</h2>
+            <span class="results-count" id="hospitalCount">Loading...</span>
+          </div>
+
+          <!-- Cards List -->
+          <div id="hospitalList" class="hospital-cards-grid" role="region" aria-label="Hospital listings">
+            <!-- Populated dynamically via app.js -->
+          </div>
+        </div>
+
+        <!-- Interactive Map Column -->
+        <div class="directory-map-col">
+          <div class="map-container-card">
+            <div class="map-card-header">
+              <div class="map-header-left">
+                <span class="map-badge">MAP VIEW</span>
+                <span class="map-hint">Click markers for details</span>
+              </div>
+              <button id="recenterMapBtn" class="btn btn-sm btn-ghost">Reset View</button>
+            </div>
+            <div id="map" class="leaflet-map-wrapper"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: EMERGENCY QUICK-MATCH WIZARD -->
+    <section id="view-quickmatch" class="tab-view">
+      <div class="triage-card">
+        <div class="triage-header">
+          <div class="triage-icon-bubble">🚨</div>
+          <div>
+            <span class="triage-badge">URGENT PATIENT TRIAGE</span>
+            <h2>Nearest Matching Medical Resource</h2>
+            <p>Select the critical resource needed. Our algorithm ranks nearby verified facilities using live capacity, distance, verification freshness, and emergency trauma readiness.</p>
+          </div>
+        </div>
+
+        <div class="triage-form">
+          <div class="triage-step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <label class="step-title">What critical medical resource is needed right now?</label>
+              <div class="triage-options-grid">
+                <button class="triage-choice active" data-need="icu">
+                  <span class="choice-icon">🫀</span>
+                  <b>ICU Bed</b>
+                  <small>Critical care with continuous vitals monitoring</small>
+                </button>
+                <button class="triage-choice" data-need="ventilator">
+                  <span class="choice-icon">💨</span>
+                  <b>Mechanical Ventilator</b>
+                  <small>Severe respiratory distress or ARDS</small>
+                </button>
+                <button class="triage-choice" data-need="oxygen">
+                  <span class="choice-icon">🫁</span>
+                  <b>High-Flow Oxygen</b>
+                  <small>Oxygen-supported bed / Cylinder backup</small>
+                </button>
+                <button class="triage-choice" data-need="blood">
+                  <span class="choice-icon">🩸</span>
+                  <b>Blood Transfusion</b>
+                  <small>Severe trauma, hemorrhage or surgical need</small>
+                </button>
+                <button class="triage-choice" data-need="ambulance">
+                  <span class="choice-icon">🚑</span>
+                  <b>Emergency Ambulance</b>
+                  <small>Immediate dispatch with ALS / BLS paramedic</small>
+                </button>
+                <button class="triage-choice" data-need="emergency">
+                  <span class="choice-icon">🏥</span>
+                  <b>Emergency Trauma Bed</b>
+                  <small>Accident, poisoning, or acute medical emergency</small>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Blood Group Selection for Blood Need -->
+          <div class="triage-blood-substep" id="triageBloodSubstep" style="display: none;">
+            <label>Specify Target Blood Group:</label>
+            <div class="blood-group-pills" id="triageBloodPills">
+              <button class="blood-pill active" data-group="O+">O+</button>
+              <button class="blood-pill" data-group="O-">O-</button>
+              <button class="blood-pill" data-group="A+">A+</button>
+              <button class="blood-pill" data-group="A-">A-</button>
+              <button class="blood-pill" data-group="B+">B+</button>
+              <button class="blood-pill" data-group="B-">B-</button>
+              <button class="blood-pill" data-group="AB+">AB+</button>
+              <button class="blood-pill" data-group="AB-">AB-</button>
+            </div>
+          </div>
+
+          <div class="triage-step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <label class="step-title">Patient Location Coordinates</label>
+              <div class="location-picker-row">
+                <button id="triageGpsBtn" class="btn btn-primary">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3m-10-10h3m14 0h3"/></svg>
+                  Use My Current GPS Location
+                </button>
+                <span class="location-or">or select reference location:</span>
+                <select id="triageCityPreset" class="triage-select">
+                  <option value="25.6093,85.1235">Bailey Road / Patna Central (25.609, 85.123)</option>
+                  <option value="25.5941,85.1376">Kankarbagh / Doctors Colony (25.594, 85.137)</option>
+                  <option value="25.6120,85.0920">Raja Bazar / Pillar 68 (25.612, 85.092)</option>
+                  <option value="25.6335,85.0450">Danapur Cantonment (25.633, 85.045)</option>
+                  <option value="25.4830,85.7100">Barh Sub-Division (25.483, 85.710)</option>
+                  <option value="24.7955,85.0002">Gaya Medical Campus (24.795, 85.000)</option>
+                  <option value="26.1209,85.3647">Muzaffarpur District (26.120, 85.364)</option>
+                </select>
+              </div>
+              <p id="triageLocationStatus" class="triage-loc-status">Using default triage center coordinates.</p>
+            </div>
+          </div>
+
+          <button id="runTriageBtn" class="btn btn-emergency-lg">
+            Find Optimal Matching Hospitals Now
+          </button>
+        </div>
+
+        <!-- Triage Match Results Section -->
+        <div id="triageResultsContainer" class="triage-results-wrap" style="display: none;">
+          <h3 class="triage-results-title">Recommended Facilities (Ranked by Match Score)</h3>
+          <div id="triageResultsList" class="triage-cards-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: BLOOD BANK CENTRAL -->
+    <section id="view-bloodbank" class="tab-view">
+      <div class="blood-hero-card">
+        <div class="blood-hero-content">
+          <span class="eyebrow-chip">CITY-WIDE INVENTORY</span>
+          <h2>Central Blood Bank Exchange</h2>
+          <p>Real-time units stocked across all verified hospitals. Check available units before sending patients or organizing donor drives.</p>
+        </div>
+        <div class="blood-grid-matrix" id="bloodSummaryGrid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <div class="blood-table-panel">
+        <div class="panel-header-flex">
+          <div>
+            <h3>Hospital-Wise Blood Stock Details</h3>
+            <p class="muted">Select any hospital below to call their blood bank desk directly.</p>
+          </div>
+          <div class="blood-filter-tabs" id="bloodGroupFilterTabs">
+            <button class="blood-tab-btn active" data-grp="all">All Groups</button>
+            <button class="blood-tab-btn" data-grp="O+">O+</button>
+            <button class="blood-tab-btn" data-grp="O-">O- (Universal)</button>
+            <button class="blood-tab-btn" data-grp="A+">A+</button>
+            <button class="blood-tab-btn" data-grp="A-">A-</button>
+            <button class="blood-tab-btn" data-grp="B+">B+</button>
+            <button class="blood-tab-btn" data-grp="B-">B-</button>
+            <button class="blood-tab-btn" data-grp="AB+">AB+</button>
+            <button class="blood-tab-btn" data-grp="AB-">AB-</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="blood-inventory-table">
+            <thead>
+              <tr>
+                <th>Hospital / Facility</th>
+                <th>City & Area</th>
+                <th>Target Blood Stock</th>
+                <th>Last Verified</th>
+                <th>Direct Blood Bank Desk</th>
+              </tr>
+            </thead>
+            <tbody id="bloodInventoryTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: LIVE CITY ALERTS -->
+    <section id="view-alerts" class="tab-view">
+      <div class="alerts-view-header">
+        <div>
+          <span class="eyebrow-chip alert-chip">CRITICAL SIGNALS</span>
+          <h2>City Medical Resource Alerts</h2>
+          <p>Automated warnings for critical bed capacity depletion, ventilator shortages, ambulance downtime, and unverified data.</p>
+        </div>
+        <div class="alert-filter-chips" id="alertFilterChips">
+          <button class="chip-btn active" data-sev="all">All Signals</button>
+          <button class="chip-btn" data-sev="critical">🔴 Critical Shortages</button>
+          <button class="chip-btn" data-sev="high">🟠 High Priority</button>
+          <button class="chip-btn" data-sev="warning">🟡 Verification Warnings</button>
+        </div>
+      </div>
+
+      <div id="alertsFeed" class="alerts-feed-grid">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+    <!-- VIEW 5: HOSPITAL ADMIN PORTAL -->
+    <section id="view-admin" class="tab-view">
+      <div class="admin-auth-card" id="adminAuthSection">
+        <div class="admin-auth-inner">
+          <div class="auth-icon-circle">🔐</div>
+          <h2>Hospital Resource Management Portal</h2>
+          <p>Authorized medical facility staff and triage officers can publish live updates to ICU, oxygen, bed availability, blood stock, and ambulance fleet.</p>
+
+          <form id="adminLoginForm" class="admin-login-form">
+            <div class="form-group">
+              <label for="adminHospitalSelect">Select Your Medical Facility</label>
+              <select id="adminHospitalSelect" required>
+                <option value="">Choose hospital...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="adminPinInput">Facility Security PIN</label>
+              <input type="password" id="adminPinInput" placeholder="Enter PIN (Demo PIN: 1234)" value="1234" required>
+              <small class="form-hint">Default demo PIN is <code>1234</code> for all sample hospitals.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary-full">
+              Authenticate & Open Facility Control Center
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Authenticated Control Center -->
+      <div class="admin-control-center" id="adminControlSection" style="display: none;">
+        <div class="admin-banner">
+          <div class="admin-banner-info">
+            <span class="admin-pill">AUTHENTICATED FACILITY</span>
+            <h2 id="activeHospitalName">CityCare Hospital</h2>
+            <div class="admin-facility-meta">
+              <span id="activeHospitalCity">Patna</span> · 
+              <span id="activeHospitalTrauma">Level 1 Trauma</span> · 
+              <span id="activeHospitalFreshness" class="freshness-tag">Last Verified: Just Now</span>
+            </div>
+          </div>
+          <button id="adminLogoutBtn" class="btn btn-sm btn-outline">Log Out / Switch Facility</button>
+        </div>
+
+        <form id="adminUpdateForm" class="admin-update-form">
+          <!-- Section 1: Inpatient & Critical Beds -->
+          <div class="admin-section-card">
+            <div class="section-card-header">
+              <div class="sec-icon">🛏️</div>
+              <div>
+                <h3>Bed Availability & Critical Care</h3>
+                <p>Update total bed capacity and currently available unoccupied beds.</p>
+              </div>
+            </div>
+
+            <div class="resource-input-grid">
+              <!-- General Beds -->
+              <div class="resource-box">
+                <span class="box-title">General Inpatient Beds</span>
+                <div class="input-pair">
+                  <div>
+                    <label>Total Capacity</label>
+                    <input type="number" id="inGenTotal" min="1" required>
+                  </div>
+                  <div>
+                    <label>Available Now</label>
+                    <input type="number" id="inGenAvail" min="0" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Emergency Beds -->
+              <div class="resource-box">
+                <span class="box-title">Emergency / Triage Beds</span>
+                <div class="input-pair">
+                  <div>
+                    <label>Total Capacity</label>
+                    <input type="number" id="inEmTotal" min="1" required>
+                  </div>
+                  <div>
+                    <label>Available Now</label>
+                    <input type="number" id="inEmAvail" min="0" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ICU Beds -->
+              <div class="resource-box highlight-box">
+                <span class="box-title">Intensive Care Unit (ICU)</span>
+                <div class="input-pair">
+                  <div>
+                    <label>Total ICU Beds</label>
+                    <input type="number" id="inIcuTotal" min="1" required>
+                  </div>
+                  <div>
+                    <label>Available ICU</label>
+                    <input type="number" id="inIcuAvail" min="0" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mechanical Ventilators -->
+              <div class="resource-box highlight-box">
+                <span class="box-title">Mechanical Ventilators</span>
+                <div class="input-pair">
+                  <div>
+                    <label>Total Ventilators</label>
+                    <input type="number" id="inVentTotal" min="0" required>
+                  </div>
+                  <div>
+                    <label>Available Free</label>
+                    <input type="number" id="inVentAvail" min="0" required>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Oxygen Support -->
+          <div class="admin-section-card">
+            <div class="section-card-header">
+              <div class="sec-icon">🫁</div>
+              <div>
+                <h3>Medical Oxygen Infrastructure</h3>
+                <p>Track beds equipped with oxygen and emergency backup cylinder counts.</p>
+              </div>
+            </div>
+
+            <div class="resource-input-grid">
+              <div class="resource-box">
+                <label>Oxygen-Supported Beds Available</label>
+                <input type="number" id="inOxyBeds" min="0" required>
+              </div>
+
+              <div class="resource-box">
+                <label>Oxygen Cylinders in Reserve (D/B Type)</label>
+                <input type="number" id="inOxyCylinders" min="0" required>
+              </div>
+
+              <div class="resource-box">
+                <label>Liquid Oxygen Pipeline Status</label>
+                <select id="inOxyPipeline">
+                  <option value="Operational">Operational (Full Pressure)</option>
+                  <option value="Limited">Limited / Secondary Backup</option>
+                  <option value="Down">Down / Maintenance</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Blood Bank Inventory -->
+          <div class="admin-section-card">
+            <div class="section-card-header">
+              <div class="sec-icon">🩸</div>
+              <div>
+                <h3>Blood Bank Inventory (Units Available)</h3>
+                <p>Adjust units for all 8 blood groups. Values update city alerts instantly.</p>
+              </div>
+            </div>
+
+            <div class="blood-input-grid">
+              <div class="blood-input-item">
+                <label>A+</label>
+                <input type="number" id="bld_A_pos" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>A-</label>
+                <input type="number" id="bld_A_neg" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>B+</label>
+                <input type="number" id="bld_B_pos" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>B-</label>
+                <input type="number" id="bld_B_neg" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>AB+</label>
+                <input type="number" id="bld_AB_pos" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>AB-</label>
+                <input type="number" id="bld_AB_neg" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>O+</label>
+                <input type="number" id="bld_O_pos" min="0" required>
+              </div>
+              <div class="blood-input-item">
+                <label>O-</label>
+                <input type="number" id="bld_O_neg" min="0" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Ambulance Fleet & Operational Readiness -->
+          <div class="admin-section-card">
+            <div class="section-card-header">
+              <div class="sec-icon">🚑</div>
+              <div>
+                <h3>Ambulances & Emergency Triage Status</h3>
+                <p>Manage ambulance fleet availability and direct triage acceptance status.</p>
+              </div>
+            </div>
+
+            <div class="resource-input-grid">
+              <div class="resource-box">
+                <label>Basic Life Support (BLS) Ambulances</label>
+                <input type="number" id="inAmbBls" min="0" required>
+              </div>
+
+              <div class="resource-box">
+                <label>Advanced Cardiac Life Support (ALS) Ambulances</label>
+                <input type="number" id="inAmbAls" min="0" required>
+              </div>
+
+              <div class="resource-box">
+                <label>Total Ambulances Currently On-Duty</label>
+                <input type="number" id="inAmbOnDuty" min="0" required>
+              </div>
+
+              <div class="resource-box">
+                <label>Ambulance Dispatch Hotline</label>
+                <input type="text" id="inAmbContact" placeholder="+91-9800000000" required>
+              </div>
+            </div>
+
+            <div class="emergency-toggle-box">
+              <div class="toggle-info">
+                <b>Accepting Emergency Admissions & Trauma Triage</b>
+                <p class="muted">Disable only if emergency department is overwhelmed or on diversion.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="inEmergencyReady">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="form-group audit-meta-group">
+              <label for="inStaffName">Updating Officer / Triage Nurse Name</label>
+              <input type="text" id="inStaffName" placeholder="e.g. Dr. A. Sharma / Duty Medical Officer" required>
+            </div>
+
+            <div class="form-group audit-meta-group">
+              <label for="inUpdateNote">Verification Note / Reason for update</label>
+              <input type="text" id="inUpdateNote" placeholder="e.g. Regular shift handover verified bed count" value="Shift verification">
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="admin-action-row">
+            <button type="submit" id="saveUpdateBtn" class="btn btn-primary-full">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Publish Verified Live Update
+            </button>
+          </div>
+        </form>
+
+        <!-- Audit Trail Table -->
+        <div class="admin-audit-section">
+          <h3>Verification Audit Trail</h3>
+          <p class="muted">History of recent verified updates published for this facility.</p>
+          <div class="table-responsive">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Updated By</th>
+                  <th>Changes Published</th>
+                  <th>Verification Note</th>
+                </tr>
+              </thead>
+              <tbody id="adminAuditTableBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- HOSPITAL DETAIL DIALOG / MODAL (Modern Native Dialog) -->
+  <dialog id="hospitalDetailDialog" class="detail-dialog" aria-labelledby="dialogHospitalTitle">
+    <div class="dialog-inner">
+      <div class="dialog-header">
+        <div>
+          <div class="dialog-meta-row">
+            <span id="dialogTraumaBadge" class="trauma-badge">Level 1 Trauma</span>
+            <span id="dialogFreshnessBadge" class="freshness-badge">● Live</span>
+            <span id="dialogEmergencyBadge" class="readiness-badge">Emergency Ready</span>
+          </div>
+          <h2 id="dialogHospitalTitle" class="dialog-title">Patna Apex Hospital</h2>
+          <p id="dialogAddress" class="dialog-address">Bailey Road, Patna</p>
+        </div>
+        <button id="closeDialogBtn" class="dialog-close-btn" aria-label="Close details">✕</button>
+      </div>
+
+      <!-- Quick Action Buttons Strip -->
+      <div class="dialog-action-strip">
+        <a id="dialogEmergencyCall" href="#" class="btn btn-emergency">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Emergency Desk
+        </a>
+        <a id="dialogAmbulanceCall" href="#" class="btn btn-outline">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-4l2-5h9l4 5h1a2 2 0 0 1 2 2v2h-2m-4 0H9"/></svg>
+          Ambulance Hotline
+        </a>
+        <a id="dialogBloodCall" href="#" class="btn btn-outline">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          Blood Bank
+        </a>
+        <a id="dialogDirectionsLink" href="#" target="_blank" rel="noopener" class="btn btn-secondary">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          Get Directions
+        </a>
+      </div>
+
+      <!-- Detailed Breakdown Grid -->
+      <div class="dialog-body-content">
+        <!-- Bed Matrix -->
+        <div class="dialog-section">
+          <h3>Hospital Inpatient & Critical Bed Matrix</h3>
+          <div class="dialog-bed-grid" id="dialogBedGrid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Oxygen & Medical Gas -->
+        <div class="dialog-section">
+          <h3>Oxygen Supply & Medical Gas</h3>
+          <div class="dialog-oxygen-box" id="dialogOxygenBox">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Blood Bank Stock -->
+        <div class="dialog-section">
+          <h3>Blood Bank Inventory Breakdown</h3>
+          <div class="dialog-blood-grid" id="dialogBloodGrid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Ambulance Fleet & Specialties -->
+        <div class="dialog-section-split">
+          <div>
+            <h3>Ambulance Fleet</h3>
+            <div id="dialogAmbulanceInfo" class="info-card-plain"></div>
+          </div>
+          <div>
+            <h3>Clinical Specialties</h3>
+            <div id="dialogSpecialtiesList" class="specialties-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Mobile Bottom Sticky Navigation Bar -->
+  <nav class="mobile-nav" aria-label="Mobile Navigation">
+    <button class="mobile-nav-btn active" data-tab="directory">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span>Directory</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="quickmatch">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      <span>Match</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="bloodbank">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+      <span>Blood</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="alerts">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+      <span>Alerts</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="admin">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Portal</span>
+    </button>
+  </nav>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div>
+        <p><strong>IntraCity Medical Resource Tracker</strong> — An open public health emergency coordination initiative.</p>
+        <p class="muted">All resource availability numbers are verified via authenticated hospital triage desks. In life-threatening emergencies, always dial <strong>108 / 112</strong> immediately.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#view-directory" onclick="switchTab('directory'); return false;">Directory</a> · 
+        <a href="#view-quickmatch" onclick="switchTab('quickmatch'); return false;">Triage Match</a> · 
+        <a href="#view-bloodbank" onclick="switchTab('bloodbank'); return false;">Blood Bank</a> · 
+        <a href="#view-admin" onclick="switchTab('admin'); return false;">Staff Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/app.js"></script>
+</body>
+</html>
