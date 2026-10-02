@@ -45,3 +45,11 @@
       "emergencyBeds": {
         "available": 4
       },
+      "blood": {
+        "O+": 9,
+        "O-": 1
+      }
+    },
+    "note": "Blood bank incoming donation processed."
+  }
+]
